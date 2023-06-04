@@ -2,107 +2,215 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 9</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lab 9</title>
 
-  <style>
-    button {
-      margin: 3px;
-    }
+	<style>
+		@keyframes fade {
+			0% {
+				border-color: #f00;
+			}
+			100% {
+				border-color: #ff000000;
+			}
+		}
+		@keyframes corrfade {
+			0% {
+				border-color: #3f3;
+			}
+			100% {
+				border-color: #00ff0000;
+			}
+		}
+		.animate {
+			animation: 0.5s forwards linear;
+			border: 5px solid transparent;
+		}
+		.correct {
+			animation-name: corrfade;
+		}
+		.incorrect {
+			animation-name: fade;
+		}
+		button {
+			margin: 3px;
+		}
 
-    button:hover {
-      cursor: pointer;
-    }
+		button:hover {
+			cursor: pointer;
+		}
 
-    #first-num,
-    #second-num {
-      width: 60px;
-    }
+		#first-num,
+		#second-num {
+			width: 60px;
+		}
 
-    output {
-      border: 1px solid gray;
-      display: block;
-      height: 18px;
-      margin-top: 5px;
-      padding: 5px;
-      width: 240px;
-    }
+		output {
+			border: 1px solid gray;
+			display: block;
+			height: 18px;
+			margin-top: 5px;
+			padding: 5px;
+			width: 240px;
+			border: 5px solid transparent;
+		}
 
-    main {
-      width: 800px;
-    }
+		main {
+			width: 800px;
+		}
 
-    #error-btns {
-      column-gap: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 30px;
-      row-gap: 5px;
-    }
+		#error-btns {
+			column-gap: 5px;
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 30px;
+			row-gap: 5px;
+		}
 
-    #error-btns>* {
-      padding: 8px 2px;
-      width: 122px;
-    }
-  </style>
+		#error-btns>* {
+			padding: 8px 2px;
+			width: 122px;
+		}
+	</style>
 </head>
 
 <body>
-  <main>
-    <form>
-      <fieldset>
-        <legend>Error Calculator</legend>
-        <input name="first-num" id="first-num" />
-        <select name="operator" id="operator">
-          <option>+</option>
-          <option>-</option>
-          <option>*</option>
-          <option>/</option>
-        </select>
-        <input name="second-num" id="second-num" />
-        <button id="calculate">Calculate</button>
-        <br />
-        <output></output>
-      </fieldset>
-    </form>
+	<main>
+		<form>
+			<fieldset>
+				<legend>Error Calculator</legend>
+				<input name="first-num" id="first-num" />
+				<select name="operator" id="operator">
+					<option>+</option>
+					<option>-</option>
+					<option>*</option>
+					<option>/</option>
+				</select>
+				<input name="second-num" id="second-num" />
+				<button id="calculate">Calculate</button>
+				<br />
+				<output></output>
+			</fieldset>
+		</form>
 
-    <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
-    </section>
-  </main>
+		<section id="error-btns">
+			<button data-err="log">Console Log</button>
+			<button data-err="error">Console Error</button>
+			<button data-err="count">Console Count</button>
+			<button data-err="warn">Console Warn</button>
+			<button data-err="assert">Console Assert</button>
+			<button data-err="clear">Console Clear</button>
+			<button data-err="dir">Console Dir</button>
+			<button data-err="dirxml">Console dirxml</button>
+			<button data-err="gstart">Console Group Start</button>
+			<button data-err="gend">Console Group End</button>
+			<button data-err="table">Console Table</button>
+			<button data-err="tstart">Start Timer</button>
+			<button data-err="tend">End Timer</button>
+			<button data-err="trace">Console Trace</button>
+			<button data-err="gerr">Trigger a Global Error</button>
+		</section>
+	</main>
 
-  <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+	<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+	<script>
+	window.TrackJS && TrackJS.install({ 
+		token: "5087c5bb0fda455c977369b10dd31c2d"
+		// for more configuration options, see https://docs.trackjs.com
+  	});
+	</script>
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+	<script>
+		class ValidationError extends Error {
+			constructor(message) {
+				super(message);
+				this.name = "ValidationError";
+			}
+		}
 
-    // Start your code here
-    // You may move this JS to another file if you wish
-  </script>
+		let form = document.querySelector('form');
+		form.addEventListener('submit', e => {
+			e.preventDefault();
+			let output = document.querySelector('output');
+			let firstNum = document.querySelector('#first-num').value;
+			let secondNum = document.querySelector('#second-num').value;
+			let operator = document.querySelector('#operator').value;
+			try {
+				if (isNaN(Number(firstNum))) {
+					throw new ValidationError("First number is not a number");
+				}
+				if (isNaN(Number(secondNum))) {
+					throw new ValidationError("Second number is not a number");
+				}
+				output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+				output.classList.add("correct");
+				output.classList.remove("incorrect");
+			} catch (e) {
+				console.log(e);
+				output.innerHTML = "ERROR";
+				output.classList.add("incorrect");
+				output.classList.remove("correct");
+			} finally {
+				output.classList.add("animate");
+				setTimeout(()=>{output.classList.remove("animate")}, 500);
+			}
+		});
+
+		let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+		const handle = (e) => {
+			switch(e.target?.dataset?.err) {
+				case "log":
+					console.log("This is a console.log statement :)");
+				break;
+				case "error":
+					console.error("Woah look at this error");
+				break;
+				case "count":
+					console.count("You clicked this button this many times");
+				break;
+				case "warn":
+					console.warn("You probably shouldn't click that button again");
+				break;
+				case "assert":
+					console.assert(2+2===5, "2 + 2 doesn't equal 5");
+				break;
+				case "clear":
+					console.clear();
+				break;
+				case "dir":
+					console.dir(window);
+				break;
+				case "dirxml":
+					console.dirxml(document.querySelector("main"));
+				break;
+				case "gstart":
+					console.group("group");
+				break;
+				case "gend":
+					console.groupEnd("group");
+				break;
+				case "table":
+					console.table(errorBtns);
+				case "tstart":
+					console.time("how fast are u");
+				break;
+				case "tend":
+					console.timeEnd("how fast are u");
+				break;
+				case "trace":
+					console.trace();
+				break;
+				case "gerr":
+					throw new Error("This is an error");
+				break;
+			}
+		}
+		errorBtns.forEach(btn=>btn.addEventListener("click", handle));
+		// Start your code here
+		// You may move this JS to another file if you wish
+	</script>
 </body>
 
 </html>
